@@ -11,6 +11,14 @@ module.exports = {
       twitter: `stonesteel1023`,
     },
   },
+  categories: [
+      { name: `home`, url: `/`, displayText: `Home`, priority: 0, generatePage: false },
+      { name: `til`, url: `/til`, displayText: `TIL`, description: `Today I Learned`, priority: 1, generatePage: true },
+      { name: `sec`, url: `/sec`, displayText: `보안`, description: `사이버보안에 관하여`, priority: 2, generatePage: true },
+      { name: `scrab`, url: `/scrab`, displayText: ``, description: `출처가 확실한 좋은글들`, priority: 3, generatePage: true },
+      { name: `daily`, url: `/daily`, displayText: `다이어리`, description: `매일의 일상`, priority: 5, generatePage: true },
+    ]
+  },
   plugins: [
     `gatsby-plugin-image`,
     {
