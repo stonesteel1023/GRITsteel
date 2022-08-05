@@ -1,20 +1,23 @@
 import * as React from "react"
 import { Link, graphql } from "gatsby"
 
-import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 import Nav from "../components/nav"
 
-const BlogPostTemplate = ({
-  data: { previous, next, site, markdownRemark: post },
-  location,
-}) => {
-  const siteTitle = site.siteMetadata?.title || `Title`
+const _ = require(`lodash`)
+const BlogPostTemplate = ({ data, location }) => {
+  const post = data.markdownRemark
+  const siteTitle = data.site.siteMetadata?.title || `Title`
+  const { previous, next } = data
 
   return (
     <Layout location={location} title={siteTitle}>
-    <Nav categories={data.site.siteMetadata.categories}/>
+      <Seo
+        title={post.frontmatter.title}
+        description={post.frontmatter.description || post.excerpt}
+      />
+      <Nav categories={data.site.siteMetadata.categories}/>
       <hr />
       <article
         className="blog-post"
@@ -23,17 +26,20 @@ const BlogPostTemplate = ({
       >
         <header>
           <h1 itemProp="headline">{post.frontmatter.title}</h1>
-          <p>{post.frontmatter.date}</p>
+          {post.frontmatter.tags && (
+            <span>Tags: {post.frontmatter.tags.map (tag => {
+              const tagLinkUrl = `/tags/`+_.kebabCase(tag)
+              return <span className="tag"><Link to ={tagLinkUrl}>{tag}</Link></span>
+            })}</span>
+          )}
+          <p>{post.frontmatter.date}{post.frontmatter.updated != null && `; updated on ` + post.frontmatter.updated}</p>
         </header>
         <section
           dangerouslySetInnerHTML={{ __html: post.html }}
           itemProp="articleBody"
         />
-        <hr />
-        <footer>
-          <Bio />
-        </footer>
       </article>
+      <hr />
       <nav className="blog-post-nav">
         <ul
           style={{
@@ -64,15 +70,6 @@ const BlogPostTemplate = ({
   )
 }
 
-export const Head = ({ data: { markdownRemark: post } }) => {
-  return (
-    <Seo
-      title={post.frontmatter.title}
-      description={post.frontmatter.description || post.excerpt}
-    />
-  )
-}
-
 export default BlogPostTemplate
 
 export const pageQuery = graphql`
@@ -85,10 +82,10 @@ export const pageQuery = graphql`
       siteMetadata {
         title
         categories {
-        displayText
-        priority
-        name
-        url
+          displayText
+          priority
+          name
+          url
         }
       }
     }
@@ -98,8 +95,11 @@ export const pageQuery = graphql`
       html
       frontmatter {
         title
+        category
         date(formatString: "MMMM DD, YYYY")
+        updated(formatString: "MMMM DD, YYYY")
         description
+        tags
       }
     }
     previous: markdownRemark(id: { eq: $previousPostId }) {
@@ -108,10 +108,6 @@ export const pageQuery = graphql`
       }
       frontmatter {
         title
-        category
-        date(formatString: "MMMM DD, YYYY")
-        updated(formatString: "MMMM DD, YYYY")
-        description
       }
     }
     next: markdownRemark(id: { eq: $nextPostId }) {

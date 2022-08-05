@@ -1,21 +1,22 @@
 module.exports = {
   siteMetadata: {
-    title: `GRITsteel's new home`,
+    title: `bestalign's dev blog`,
     author: {
-      name: `stonesteel`,
-      summary: `Cyberpunk agent`,
+      name: `최정렬`,
+      summary: `who lives and works in Seattle.`,
     },
-    description: `New home from gitpage`,
-    siteUrl: `https://stonesteel1023.github.io/`,
+    description: `bestalign's dev blog`,
+    siteUrl: `https://bestalign.github.io/`,
     social: {
-      twitter: `stonesteel1023`,
+      twitter: `bestalign`,
     },
     categories: [
-      { name: `home`, url: `/`, displayText: `Home`, priority: 0, generatePage: false },
-      { name: `til`, url: `/til`, displayText: `TIL`, description: `Today I Learned`, priority: 1, generatePage: true },
-      { name: `blog`, url: `/blog`, displayText: `보안`, description: `사이버보안에 관하여`, priority: 2, generatePage: true },
-      { name: `scrab`, url: `/scrab`, displayText: ``, description: `출처가 확실한 좋은글들`, priority: 3, generatePage: true },
-      { name: `daily`, url: `/daily`, displayText: `다이어리`, description: `매일의 일상`, priority: 4, generatePage: true },
+      { name: `home`, url: `/`, displayText: `홈`, priority: 0, generatePage: false },
+      { name: `til`, url: `/til`, displayText: `TIL`, description: `Today I Learned. 오늘 배운 것을 짧게 기록합니다.`, priority: 1, generatePage: true },
+      { name: `dev`, url: `/dev`, displayText: `개발`, description: `개발, 기술, 방법론 등에 관해 직접 작성합니다.`, priority: 2, generatePage: true },
+      { name: `reading`, url: `/reading`, displayText: `독서`, description: `책을 읽고 드는 생각을 기록합니다.`, priority: 3, generatePage: true },
+      { name: `translation`, url: `/translation`, displayText: `번역`, description: `마음에 드는 글을 번역합니다.`, priority: 4, generatePage: true },
+      { name: `everydaylife`, url: `/everydaylife`, displayText: `일기`, description: `다양한 경험, 생각, 주제에 관해 씁니다.`, priority: 5, generatePage: true },
     ]
   },
   plugins: [
@@ -23,12 +24,12 @@ module.exports = {
     {
       resolve: "gatsby-plugin-react-svg",
       options: {
-      rule: {
-      include: /assets/
+        rule: {
+          include: /assets/
         }
       }
     },
-    {  
+    {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/content/blog`,
@@ -45,8 +46,8 @@ module.exports = {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/content/scrab`,
-        name: `scrab`,
+        path: `${__dirname}/content/reading`,
+        name: `reading`,
       },
     },
     {
@@ -72,7 +73,7 @@ module.exports = {
               wrapperStyle: `margin-bottom: 1.0725rem`,
             },
           },
-                    {
+          {
             resolve: `gatsby-remark-table-of-contents`,
             options: {
               exclude: "Table of Contents",
@@ -92,12 +93,12 @@ module.exports = {
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
-    // {
-    //   resolve: `gatsby-plugin-google-analytics`,
-    //   options: {
-    //     trackingId: `ADD YOUR TRACKING ID HERE`,
-    //   },
-    // },
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: `UA-37673421-2`,
+      },
+    },
     {
       resolve: `gatsby-plugin-feed`,
       options: {
@@ -146,8 +147,7 @@ module.exports = {
                 }
               }
             `,
-            output: "/rss.xml",
-            title: "Gatsby Starter Blog RSS Feed",
+            output: "/atom.xml",
           },
         ],
       },
@@ -155,20 +155,19 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Gatsby Starter Blog`,
-        short_name: `GatsbyJS`,
+        name: `bestalign's dev blog`,
+        short_name: `dev blog`,
         start_url: `/`,
         background_color: `#ffffff`,
         theme_color: `#663399`,
-        // This will impact how browsers show your PWA/website
-        // https://css-tricks.com/meta-theme-color-and-trickery/
-        // theme_color: `#663399`,
         display: `minimal-ui`,
-        icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
+        icon: `src/images/icon.png`, // This path is relative to the root of the site.
       },
     },
-    // this (optional) plugin enables Progressive Web App + Offline functionality
-    // To learn more, visit: https://gatsby.dev/offline
-    // `gatsby-plugin-offline`,
+    `gatsby-plugin-react-helmet`,
+
+    // below two plugins are to support the old post URLs, which were used on Hexo
+    'gatsby-redirect-from',
+    'gatsby-plugin-meta-redirect'
   ],
 }
