@@ -164,8 +164,5 @@ module.exports = {
     },
     `gatsby-plugin-react-helmet`,
 
-    // below two plugins are to support the old post URLs, which were used on Hexo
-    'gatsby-redirect-from',
-    'gatsby-plugin-meta-redirect'
   ],
 }
