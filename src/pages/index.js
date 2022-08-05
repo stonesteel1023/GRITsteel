@@ -14,18 +14,18 @@ const Index = ({ data, location }) => {
 
   return (
     <Layout location={location} title={siteTitle}>
-      <Seo title="홈" />
+      <Seo title="Home" />
       <Nav categories={data.site.siteMetadata.categories}/>
       <hr />
       <article className="introduction">
-        <h6>안녕하세요, 최정렬입니다.</h6>
-        <p>미국 시애틀에서 일하는 소프트웨어 엔지니어입니다. 웹 개발을 주로 하다가 현재는 모바일앱을 개발하고 있습니다. 생산성과 개발 실력을 향상하는 자기계발에 관심이 많습니다.</p>
+        <h6>GRITsteel's</h6>
+        <p>new Home</p>
       </article>
       <section className="icons">
-        <a href="https://www.github.com/bestalign" target="_blank" rel="noreferrer">
+        <a href="https://www.github.com/stonesteel1023" target="_blank" rel="noreferrer">
           <GithubSvg width={18} height={18}/>
         </a>
-        <a href="https://www.twitter.com/bestalign" target="_blank" rel="noreferrer">
+        <a href="https://www.twitter.com/stonesteel1023" target="_blank" rel="noreferrer">
           <TwitterSvg width={18} height={18}/>
         </a>
         <Link to="/atom.xml">
