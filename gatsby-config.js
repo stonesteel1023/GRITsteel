@@ -8,7 +8,7 @@ module.exports = {
     description: `New Home`,
     siteUrl: `https://stonesteel1023.github.io/`,
     social: {
-      twitter: `bestalign`,
+      twitter: `stonesteel1023`,
     },
     categories: [
       { name: `home`, url: `/`, displayText: `Home`, priority: 0, generatePage: false },
