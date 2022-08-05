@@ -4,6 +4,7 @@ import { Link, graphql } from "gatsby"
 import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
+import Nav from "../components/nav"
 
 const BlogPostTemplate = ({
   data: { previous, next, site, markdownRemark: post },
@@ -13,6 +14,8 @@ const BlogPostTemplate = ({
 
   return (
     <Layout location={location} title={siteTitle}>
+    <Nav categories={data.site.siteMetadata.categories}/>
+      <hr />
       <article
         className="blog-post"
         itemScope
@@ -81,6 +84,12 @@ export const pageQuery = graphql`
     site {
       siteMetadata {
         title
+        categories {
+        displayText
+        priority
+        name
+        url
+        }
       }
     }
     markdownRemark(id: { eq: $id }) {
@@ -99,6 +108,10 @@ export const pageQuery = graphql`
       }
       frontmatter {
         title
+        category
+        date(formatString: "MMMM DD, YYYY")
+        updated(formatString: "MMMM DD, YYYY")
+        description
       }
     }
     next: markdownRemark(id: { eq: $nextPostId }) {
