@@ -13,14 +13,22 @@ module.exports = {
     categories: [
       { name: `home`, url: `/`, displayText: `Home`, priority: 0, generatePage: false },
       { name: `til`, url: `/til`, displayText: `TIL`, description: `Today I Learned`, priority: 1, generatePage: true },
-      { name: `sec`, url: `/sec`, displayText: `보안`, description: `사이버보안에 관하여`, priority: 2, generatePage: true },
+      { name: `blog`, url: `/blog`, displayText: `보안`, description: `사이버보안에 관하여`, priority: 2, generatePage: true },
       { name: `scrab`, url: `/scrab`, displayText: ``, description: `출처가 확실한 좋은글들`, priority: 3, generatePage: true },
-      { name: `daily`, url: `/daily`, displayText: `다이어리`, description: `매일의 일상`, priority: 5, generatePage: true },
+      { name: `daily`, url: `/daily`, displayText: `다이어리`, description: `매일의 일상`, priority: 4, generatePage: true },
     ]
   },
   plugins: [
     `gatsby-plugin-image`,
     {
+      resolve: "gatsby-plugin-react-svg",
+      options: {
+      rule: {
+      include: /assets/
+        }
+      }
+    },
+    {  
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/content/blog`,
@@ -64,6 +72,18 @@ module.exports = {
               wrapperStyle: `margin-bottom: 1.0725rem`,
             },
           },
+                    {
+            resolve: `gatsby-remark-table-of-contents`,
+            options: {
+              exclude: "Table of Contents",
+              tight: false,
+              ordered: false,
+              fromHeading: 2,
+              toHeading: 6,
+              className: "table-of-contents"
+            },
+          },
+          `gatsby-remark-autolink-headers`,
           `gatsby-remark-prismjs`,
           `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
@@ -110,6 +130,7 @@ module.exports = {
               {
                 allMarkdownRemark(
                   sort: { order: DESC, fields: [frontmatter___date] },
+                  filter: {frontmatter: {draft: {ne: true}}}
                 ) {
                   nodes {
                     excerpt
