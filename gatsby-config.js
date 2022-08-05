@@ -3,15 +3,14 @@ module.exports = {
     title: `GRITsteel's new home`,
     author: {
       name: `stonesteel`,
-      summary: `Cyber funk agent`,
+      summary: `Cyberpunk agent`,
     },
     description: `New home from gitpage`,
-    siteUrl: `https://gatsbystarterblog53830.gtsb.io/`,
+    siteUrl: `https://stonesteel1023.github.io/`,
     social: {
       twitter: `stonesteel1023`,
     },
-  },
-  categories: [
+    categories: [
       { name: `home`, url: `/`, displayText: `Home`, priority: 0, generatePage: false },
       { name: `til`, url: `/til`, displayText: `TIL`, description: `Today I Learned`, priority: 1, generatePage: true },
       { name: `sec`, url: `/sec`, displayText: `보안`, description: `사이버보안에 관하여`, priority: 2, generatePage: true },
