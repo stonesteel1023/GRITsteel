@@ -5,36 +5,120 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions
 
   // Define a template for blog post
+  const categoryPage = path.resolve(`./src/templates/category-page.js`)
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
 
   // Get all markdown blog posts sorted by date
-  const result = await graphql(
+  const categoryInfo = await graphql(
     `
       {
-        allMarkdownRemark(
-          sort: { fields: [frontmatter___date], order: ASC }
-          limit: 1000
-        ) {
-          nodes {
-            id
-            fields {
-              slug
+        site {
+          siteMetadata {
+            categories {
+              displayText
+              name
+              url
+              description
+              priority
+              generatePage
             }
           }
         }
       }
     `
   )
+  const categories = categoryInfo.data.site.siteMetadata.categories
+  
+  // create category pages
+  categories
+    .filter((category) => category.generatePage )
+    .forEach((category) => {
+    reporter.info('creating page - ' + category.name + ', ' + category.displayText + ', ' + category.priority)
+    createPage({
+      path: category.url,
+      component: categoryPage,
+      context: {
+        categoryName: category.name,
+        categoryDisplayText: category.displayText,
+        categoryDescription: category.description
+      }
+    })
+  })
 
-  if (result.errors) {
-    reporter.panicOnBuild(
-      `There was an error loading your blog posts`,
-      result.errors
-    )
+  // create tags page
+  const tagsResult = await graphql(`
+    {
+      postsRemark: allMarkdownRemark(
+        sort: { order: DESC, fields: [frontmatter___date] }
+      ) {
+        edges {
+          node {
+            fields {
+              slug
+            }
+            frontmatter {
+              tags
+            }
+          }
+        }
+      }
+      tagsGroup: allMarkdownRemark {
+        group(field: frontmatter___tags) {
+          fieldValue
+        }
+      }
+    }
+  `)
+
+  // handle errors
+  if (tagsResult.errors) {
+    reporter.panicOnBuild(`Error while running GraphQL query.`)
     return
   }
 
-  const posts = result.data.allMarkdownRemark.nodes
+  // Make tag pages
+  tagsResult.data.tagsGroup.group.forEach(tag => {
+    createPage({
+      path: `/tags/${_.kebabCase(tag.fieldValue)}/`,
+      component: tagPage,
+      context: {
+        tag: tag.fieldValue,
+      },
+    })
+  })
+
+  // Query posts for each category
+  // This is because we want to have prev & next post in the same category
+  for (let index = 0; index < categories.length; index++) {
+    reporter.info('fetching posts under a category ' + categories[index].name)
+    const result = await graphql(
+        `
+          query postQuery ($category: String!){
+            allMarkdownRemark(
+              sort: { fields: [frontmatter___date], order: ASC }
+              filter: {frontmatter: {draft: {ne: true}, category: {eq: $category}}}
+              limit: 1000
+            ) {
+              nodes {
+                id
+                fields {
+                  slug
+                }
+              }
+            }
+          }
+        `
+    , { category: categories[index].name })
+
+    if (result.errors) {
+      reporter.panicOnBuild(
+        `There was an error loading your blog posts`,
+        result.errors
+      )
+      return
+    }
+
+    const posts = result.data.allMarkdownRemark.nodes
 
   // Create blog posts pages
   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
@@ -62,7 +146,9 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
 
   if (node.internal.type === `MarkdownRemark`) {
-    const value = createFilePath({ node, getNode })
+    const category = node.frontmatter.category
+    const path = createFilePath({ node, getNode })
+    const value = `/` + category + path
 
     createNodeField({
       name: `slug`,
@@ -86,6 +172,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       author: Author
       siteUrl: String
       social: Social
+      categories: [Category]
     }
 
     type Author {
@@ -97,6 +184,14 @@ exports.createSchemaCustomization = ({ actions }) => {
       twitter: String
     }
 
+    type Category {
+      name: String
+      url: String
+      displayText: String
+      description: String
+      priority: Int
+      generatePage: Boolean
+    }
     type MarkdownRemark implements Node {
       frontmatter: Frontmatter
       fields: Fields
@@ -104,8 +199,12 @@ exports.createSchemaCustomization = ({ actions }) => {
 
     type Frontmatter {
       title: String
+      category: String
       description: String
       date: Date @dateformat
+      updated: Date @dateformat
+      tags: [String]
+      draft: Boolean
     }
 
     type Fields {
