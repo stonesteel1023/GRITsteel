@@ -153,8 +153,8 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `bestalign's dev blog`,
-        short_name: `dev blog`,
+        name: `GRITsteel's new home`,
+        short_name: `new home`,
         start_url: `/`,
         background_color: `#ffffff`,
         theme_color: `#663399`,
